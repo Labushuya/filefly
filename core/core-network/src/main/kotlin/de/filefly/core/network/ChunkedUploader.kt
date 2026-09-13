@@ -51,10 +51,11 @@ class ChunkedUploader(
                     chunkSize = chunkSize,
                 ),
             )
-        val init = when (initResult) {
-            is ApiResult.Ok -> initResult.value
-            is ApiResult.Failure -> return initResult
-        }
+        val init =
+            when (initResult) {
+                is ApiResult.Ok -> initResult.value
+                is ApiResult.Failure -> return initResult
+            }
 
         // Server kann den Konflikt schon bei init melden; bei SKIP dann gar nicht senden.
         if (init.conflict == "exists" && conflictStrategy == de.filefly.common.ConflictStrategy.SKIP) {

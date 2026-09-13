@@ -11,7 +11,8 @@ data class UploadRecord(
     val sizeBytes: Long,
     val destPath: String,
     val status: String,
-    val serverStatus: String? = null, // stored | renamed | overwritten | skipped
+    // stored | renamed | overwritten | skipped
+    val serverStatus: String? = null,
     val errorMessage: String? = null,
     val createdAt: Long,
     val finishedAt: Long? = null,
