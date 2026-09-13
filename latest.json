@@ -3,7 +3,7 @@
   "versionCode": 200,
   "minSdk": 26,
   "apkUrl": "https://github.com/Labushuya/filefly/releases/download/v0.2.0/filefly-v0.2.0.apk",
-  "sha256": "3dfa54460bb31d96249ce455235e8a7c8697e7f66708caefa2cd13b6a5a6b1d1",
+  "sha256": "44504a829116b684921bb638653ca02bd9583cf06a2ccca4431cbba76f6556cd",
   "sizeBytes": 1614728,
   "mandatory": false
 }
