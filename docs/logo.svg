@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FileFly A — moth-in-ring (TLOU), wings are PHOTO frames (mountain+sun),
+     glowing body carries a media spark. Amber/gold on black. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="FileFly A">
+  <defs>
+    <radialGradient id="a-glow" cx="50%" cy="55%" r="60%">
+      <stop offset="0%" stop-color="#FFE9A3"/><stop offset="40%" stop-color="#FFC534"/>
+      <stop offset="78%" stop-color="#FF8A1E"/><stop offset="100%" stop-color="#F26800"/>
+    </radialGradient>
+    <linearGradient id="a-wing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD873"/><stop offset="100%" stop-color="#FF8A1E"/>
+    </linearGradient>
+    <linearGradient id="a-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFC534"/><stop offset="100%" stop-color="#FF8A1E"/>
+    </linearGradient>
+    <filter id="a-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="13"/></filter>
+    <clipPath id="a-wl"><path d="M250 172 C 206 132, 132 96, 92 128 C 60 154, 74 208, 128 232 C 176 252, 224 224, 250 200 Z"/></clipPath>
+    <clipPath id="a-wr"><path d="M262 172 C 306 132, 380 96, 420 128 C 452 154, 438 208, 384 232 C 336 252, 288 224, 262 200 Z"/></clipPath>
+  </defs>
+
+  <circle cx="256" cy="256" r="248" fill="#0B0B0D"/>
+  <circle cx="256" cy="256" r="228" fill="none" stroke="url(#a-ring)" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="470 90 300 90" transform="rotate(-32 256 256)"/>
+
+  <circle cx="256" cy="286" r="88" fill="url(#a-glow)" opacity="0.65" filter="url(#a-blur)"/>
+
+  <!-- LEFT wing = photo frame -->
+  <g>
+    <path d="M250 172 C 206 132, 132 96, 92 128 C 60 154, 74 208, 128 232 C 176 252, 224 224, 250 200 Z" fill="url(#a-wing)" stroke="url(#a-ring)" stroke-width="6"/>
+    <g clip-path="url(#a-wl)">
+      <circle cx="140" cy="150" r="14" fill="#FFF3CE"/>
+      <path d="M96 224 L150 176 L188 210 L224 182 L250 210 L250 240 L96 240 Z" fill="#B85200" opacity="0.85"/>
+    </g>
+  </g>
+  <!-- RIGHT wing = video frame (play triangle) -->
+  <g>
+    <path d="M262 172 C 306 132, 380 96, 420 128 C 452 154, 438 208, 384 232 C 336 252, 288 224, 262 200 Z" fill="url(#a-wing)" stroke="url(#a-ring)" stroke-width="6"/>
+    <g clip-path="url(#a-wr)">
+      <path d="M330 150 l40 26 l-40 26 z" fill="#B85200"/>
+    </g>
+  </g>
+
+  <!-- Head + antennae -->
+  <ellipse cx="256" cy="158" rx="22" ry="26" fill="#1B1B1F" stroke="url(#a-ring)" stroke-width="6"/>
+  <path d="M246 138 C 236 116, 220 110, 206 114" fill="none" stroke="url(#a-ring)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M266 138 C 276 116, 292 110, 306 114" fill="none" stroke="url(#a-ring)" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Glowing body -->
+  <g filter="url(#a-blur)" opacity="0.9"><ellipse cx="256" cy="286" rx="34" ry="72" fill="url(#a-glow)"/></g>
+  <ellipse cx="256" cy="286" rx="30" ry="68" fill="url(#a-glow)" stroke="#F26800" stroke-width="4"/>
+  <circle cx="256" cy="372" r="7" fill="#FFE9A3"/>
+</svg>

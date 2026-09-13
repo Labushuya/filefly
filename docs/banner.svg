@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FileFly app banner — logo mark + wordmark + tagline, on black. 1280×360. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-label="FileFly">
+  <defs>
+    <radialGradient id="bg-glow" cx="50%" cy="55%" r="60%">
+      <stop offset="0%" stop-color="#FFE9A3"/><stop offset="40%" stop-color="#FFC534"/>
+      <stop offset="78%" stop-color="#FF8A1E"/><stop offset="100%" stop-color="#F26800"/>
+    </radialGradient>
+    <linearGradient id="bg-wing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD873"/><stop offset="100%" stop-color="#FF8A1E"/>
+    </linearGradient>
+    <linearGradient id="bg-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFC534"/><stop offset="100%" stop-color="#FF8A1E"/>
+    </linearGradient>
+    <linearGradient id="bg-word" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE9A3"/><stop offset="100%" stop-color="#FFB020"/>
+    </linearGradient>
+    <filter id="bg-blur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="14"/></filter>
+    <clipPath id="bg-wl"><path d="M250 172 C 206 132, 132 96, 92 128 C 60 154, 74 208, 128 232 C 176 252, 224 224, 250 200 Z"/></clipPath>
+    <clipPath id="bg-wr"><path d="M262 172 C 306 132, 380 96, 420 128 C 452 154, 438 208, 384 232 C 336 252, 288 224, 262 200 Z"/></clipPath>
+  </defs>
+
+  <rect width="1280" height="360" fill="#0B0B0D"/>
+
+  <!-- ===== LOGO MARK (scaled + shifted into the left third) ===== -->
+  <g transform="translate(40,-76) scale(0.86)">
+    <circle cx="256" cy="256" r="248" fill="#0B0B0D"/>
+    <circle cx="256" cy="256" r="228" fill="none" stroke="url(#bg-ring)" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray="470 90 300 90" transform="rotate(-32 256 256)"/>
+    <circle cx="256" cy="286" r="88" fill="url(#bg-glow)" opacity="0.65" filter="url(#bg-blur)"/>
+    <g>
+      <path d="M250 172 C 206 132, 132 96, 92 128 C 60 154, 74 208, 128 232 C 176 252, 224 224, 250 200 Z" fill="url(#bg-wing)" stroke="url(#bg-ring)" stroke-width="6"/>
+      <g clip-path="url(#bg-wl)"><circle cx="140" cy="150" r="14" fill="#FFF3CE"/>
+        <path d="M96 224 L150 176 L188 210 L224 182 L250 210 L250 240 L96 240 Z" fill="#B85200" opacity="0.85"/></g>
+    </g>
+    <g>
+      <path d="M262 172 C 306 132, 380 96, 420 128 C 452 154, 438 208, 384 232 C 336 252, 288 224, 262 200 Z" fill="url(#bg-wing)" stroke="url(#bg-ring)" stroke-width="6"/>
+      <g clip-path="url(#bg-wr)"><path d="M330 150 l40 26 l-40 26 z" fill="#B85200"/></g>
+    </g>
+    <ellipse cx="256" cy="158" rx="22" ry="26" fill="#1B1B1F" stroke="url(#bg-ring)" stroke-width="6"/>
+    <path d="M246 138 C 236 116, 220 110, 206 114" fill="none" stroke="url(#bg-ring)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M266 138 C 276 116, 292 110, 306 114" fill="none" stroke="url(#bg-ring)" stroke-width="6" stroke-linecap="round"/>
+    <g filter="url(#bg-blur)" opacity="0.9"><ellipse cx="256" cy="286" rx="34" ry="72" fill="url(#bg-glow)"/></g>
+    <ellipse cx="256" cy="286" rx="30" ry="68" fill="url(#bg-glow)" stroke="#F26800" stroke-width="4"/>
+    <circle cx="256" cy="372" r="7" fill="#FFE9A3"/>
+  </g>
+
+  <!-- ===== WORDMARK ===== -->
+  <text x="470" y="196" font-family="Segoe UI, Arial, sans-serif" font-size="118" font-weight="800" fill="url(#bg-word)" letter-spacing="1">FileFly</text>
+  <text x="474" y="252" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="500" fill="#C9C9CE" letter-spacing="3">Fast media upload to your own server</text>
+  <rect x="476" y="272" width="150" height="5" rx="2.5" fill="url(#bg-ring)"/>
+</svg>

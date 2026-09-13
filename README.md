@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🪰 FileFly
+![FileFly](docs/banner.svg)
 
 **Fast bulk photo &amp; video upload to your own self-hosted server — straight from the Android Share Sheet.**
 
