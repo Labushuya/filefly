@@ -16,14 +16,20 @@ ssh pi@192.168.178.123
 git clone https://github.com/Labushuya/filefly-server.git
 cd filefly-server
 
-# SECRET_KEY generieren (PFLICHT — Server startet sonst NICHT)
-openssl rand -hex 32
-# Ausgabe kopieren und in docker-compose.yml bei SECRET_KEY einsetzen
-nano docker-compose.yml    # SECRET_KEY=<dein generierter Wert>
-```
-> ⚠️ Lässt du `SECRET_KEY=change-me-in-production`, bricht der Server bewusst mit einer Fehlermeldung ab (Fail-Fast). Das ist Absicht.
+# .env aus der Vorlage anlegen — hier lebt dein Secret, NICHT im Repo (.gitignore-geschützt)
+cp .env.example .env
 
-Passe ggf. den Volume-Pfad an deine HDD an (`/mnt/data:/data`).
+# Starken SECRET_KEY generieren und in die .env eintragen
+nano .env        # SECRET_KEY=<Ausgabe von: openssl rand -hex 32>
+```
+> ⚠️ **Fachgerecht:** Das Secret steht ausschließlich in `.env` auf dem Pi. `docker-compose.yml` liest sie via `env_file:` — so landet der echte Schlüssel nie in Git. Lässt du `SECRET_KEY=change-me-in-production`, bricht der Server bewusst mit einer Fehlermeldung ab (Fail-Fast). Das ist Absicht.
+>
+> Den Schlüssel generierst du direkt auf dem Pi:
+> ```bash
+> openssl rand -hex 32     # kopieren → in .env bei SECRET_KEY einsetzen
+> ```
+
+Passe ggf. den Volume-Pfad in `docker-compose.yml` an deine HDD an (`/mnt/data:/data`).
 
 ### 1.3 Starten & Bootstrap-Admin-Code holen
 ```bash
@@ -121,7 +127,7 @@ curl http://192.168.178.123:8000/version
 
 | Problem | Ursache / Fix |
 |---|---|
-| Server startet nicht, Log sagt „SECRET_KEY" | Default nicht ersetzt → echten Key setzen (1.2) |
+| Server startet nicht, Log sagt „SECRET_KEY" | Default nicht ersetzt → echten Key in `.env` setzen (1.2), dann `docker compose up -d --force-recreate` |
 | „Verbindung testen" schlägt fehl | Falsche IP/Port, Pi-Firewall, Server nicht up (`docker compose ps`) |
 | Bootstrap-Code weg | `rm filefly.db` auf dem Pi + `docker compose up -d --force-recreate` → neuer Code im Log |
 | Upload landet nicht auf HDD | Volume-Pfad in compose falsch, oder Schreibrechte auf `/mnt/data` fehlen |
