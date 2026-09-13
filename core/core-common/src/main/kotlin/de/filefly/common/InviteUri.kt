@@ -34,26 +34,18 @@ object InviteUri {
     // der Code fehlt. server darf leer sein (dann muss der Nutzer die URL separat setzen).
     fun parse(raw: String?): Parsed? {
         val uri = raw?.trim().orEmpty()
-        if (uri.isEmpty()) return null
         val prefix = "$SCHEME://$HOST"
-        if (!uri.startsWith(prefix)) return null
-
-        val query = uri.substringAfter('?', "")
+        val query = if (uri.startsWith(prefix)) uri.substringAfter('?', "") else ""
         if (query.isEmpty()) return null
 
         val params =
             query.split('&').mapNotNull { pair ->
                 val idx = pair.indexOf('=')
-                if (idx <= 0) {
-                    null
-                } else {
-                    dec(pair.substring(0, idx)) to dec(pair.substring(idx + 1))
-                }
+                if (idx <= 0) null else dec(pair.substring(0, idx)) to dec(pair.substring(idx + 1))
             }.toMap()
 
         val code = params["code"].orEmpty()
-        if (code.isBlank()) return null
-        return Parsed(server = params["server"].orEmpty(), code = code)
+        return if (code.isBlank()) null else Parsed(server = params["server"].orEmpty(), code = code)
     }
 
     private fun enc(value: String): String = URLEncoder.encode(value, StandardCharsets.UTF_8.name())
