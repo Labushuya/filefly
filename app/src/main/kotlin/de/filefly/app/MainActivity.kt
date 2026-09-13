@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -113,7 +114,7 @@ class MainActivity : ComponentActivity() {
 }
 
 // Typ-sichere Parcelable-Extras (API-Level-abhängig).
-private inline fun <reified T> Intent.parcelableExtra(key: String): T? =
+private inline fun <reified T : Parcelable> Intent.parcelableExtra(key: String): T? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getParcelableExtra(key, T::class.java)
     } else {
@@ -121,7 +122,7 @@ private inline fun <reified T> Intent.parcelableExtra(key: String): T? =
         getParcelableExtra(key)
     }
 
-private inline fun <reified T> Intent.parcelableArrayListExtra(key: String): ArrayList<T>? =
+private inline fun <reified T : Parcelable> Intent.parcelableArrayListExtra(key: String): ArrayList<T>? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getParcelableArrayListExtra(key, T::class.java)
     } else {
