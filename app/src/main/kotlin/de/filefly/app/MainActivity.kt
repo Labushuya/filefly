@@ -53,11 +53,15 @@ class MainActivity : ComponentActivity() {
     // Vom Share-Sheet übergebene Medien — vom NavHost einmalig konsumiert.
     private val sharedMedia = MutableStateFlow<List<MediaItem>>(emptyList())
 
+    // Per Deep-Link (filefly://invite?...) empfangene Einladung — vom Onboarding konsumiert.
+    private val pendingInvite = MutableStateFlow<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
         splash.setKeepOnScreenCondition { themeState.value == null }
         handleShareIntent(intent)
+        handleDeepLink(intent)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -72,6 +76,7 @@ class MainActivity : ComponentActivity() {
             FileFlyTheme(prefs = resolved) {
                 FileFlyApp(
                     sharedMedia = sharedMedia,
+                    pendingInvite = pendingInvite,
                     deps =
                         AppDependencies(
                             settingsStore = settingsStore,
@@ -90,6 +95,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleShareIntent(intent)
+        handleDeepLink(intent)
     }
 
     // ACTION_SEND (eine Datei) oder ACTION_SEND_MULTIPLE (Bulk) auswerten und die
@@ -105,6 +111,16 @@ class MainActivity : ComponentActivity() {
             }
         if (uris.isEmpty()) return
         sharedMedia.value = uris.map { MediaResolver.resolve(contentResolver, it) }
+    }
+
+    // ACTION_VIEW mit filefly://invite?... — die rohe URI wird an das Onboarding
+    // durchgereicht (dort via InviteUri.parse ausgewertet).
+    private fun handleDeepLink(intent: Intent?) {
+        if (intent?.action != Intent.ACTION_VIEW) return
+        val data = intent.data ?: return
+        if (data.scheme == "filefly") {
+            pendingInvite.value = data.toString()
+        }
     }
 
     private fun versionName(): String =

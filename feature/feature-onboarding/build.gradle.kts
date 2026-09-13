@@ -9,4 +9,7 @@ dependencies {
     implementation(project(":core:core-data"))
     implementation(project(":core:core-ui"))
     implementation(libs.kotlinx.coroutines.android)
+
+    // QR-Scan zum Einlösen (kein Play-Services).
+    implementation(libs.zxing.embedded)
 }

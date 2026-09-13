@@ -24,6 +24,10 @@ enum class Role {
     val canRename: Boolean get() = this == ADMIN || this == USER
     val canDelete: Boolean get() = this == ADMIN
 
+    // Nur Admins dürfen Invites erstellen/verwalten (Server erzwingt es zusätzlich
+    // über die "invite"-Permission im JWT).
+    val canManageInvites: Boolean get() = this == ADMIN
+
     companion object {
         fun fromString(raw: String?): Role =
             when (raw?.lowercase()) {

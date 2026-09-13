@@ -35,6 +35,7 @@ import de.filefly.core.data.SettingsStore
 fun SettingsScreen(
     viewModel: SettingsViewModel,
     onOpenUpdates: () -> Unit,
+    onOpenInvites: () -> Unit,
     onLoggedOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -93,6 +94,13 @@ fun SettingsScreen(
             Text("Zugang", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text("Rolle: ${state.role.name.lowercase()}", style = MaterialTheme.typography.bodyMedium)
             Text("Basisverzeichnis: ${state.basePath}", style = MaterialTheme.typography.bodyMedium)
+
+            // Nur Admins: Einladungen verwalten.
+            if (state.role.canManageInvites) {
+                OutlinedButton(onClick = onOpenInvites, modifier = Modifier.fillMaxWidth()) {
+                    Text("Einladungen verwalten")
+                }
+            }
 
             HorizontalDivider()
 

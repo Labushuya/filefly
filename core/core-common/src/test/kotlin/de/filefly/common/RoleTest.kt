@@ -27,4 +27,13 @@ class RoleTest {
         assertThat(Role.GUEST.canUpload).isTrue()
         assertThat(Role.UNKNOWN.canUpload).isFalse()
     }
+
+    @Test
+    fun `only admin can manage invites`() {
+        assertThat(Role.ADMIN.canManageInvites).isTrue()
+        assertThat(Role.USER.canManageInvites).isFalse()
+        assertThat(Role.SERVICE.canManageInvites).isFalse()
+        assertThat(Role.GUEST.canManageInvites).isFalse()
+        assertThat(Role.UNKNOWN.canManageInvites).isFalse()
+    }
 }

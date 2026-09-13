@@ -79,6 +79,7 @@ dependencies {
     implementation(project(":feature:feature-history"))
     implementation(project(":feature:feature-settings"))
     implementation(project(":feature:feature-updater"))
+    implementation(project(":feature:feature-invite"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)

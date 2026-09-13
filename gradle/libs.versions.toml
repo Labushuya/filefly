@@ -25,6 +25,9 @@ kotlinxSerialization = "1.7.3"
 kotlinxCoroutines = "1.9.0"
 # --- Bilder ---
 coil = "2.7.0"
+# --- QR (Sideload-freundlich: keine Google-Play-Services) ---
+zxingCore = "3.5.3"
+zxingEmbedded = "4.3.0"
 # --- Qualität ---
 ktlint = "12.1.2"
 detekt = "1.23.7"
@@ -68,6 +71,10 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# QR: zxing-core (encode) + zxing-android-embedded (scan) — kein ML-Kit/Play-Services
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxingCore" }
+zxing-embedded = { group = "com.journeyapps", name = "zxing-android-embedded", version.ref = "zxingEmbedded" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
