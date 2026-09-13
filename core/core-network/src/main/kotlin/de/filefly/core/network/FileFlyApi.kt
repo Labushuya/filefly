@@ -26,23 +26,47 @@ class FileFlyApi(
 
     // --- Auth ---
 
-    suspend fun validateInvite(code: String): ApiResult<TokenResponse> = post("/auth/invite/validate", InviteValidateRequest.serializer(), InviteValidateRequest(code), TokenResponse.serializer(), auth = false)
+    suspend fun validateInvite(code: String): ApiResult<TokenResponse> =
+        post(
+            "/auth/invite/validate",
+            InviteValidateRequest.serializer(),
+            InviteValidateRequest(code),
+            TokenResponse.serializer(),
+            auth = false,
+        )
 
     // --- System ---
 
-    suspend fun health(): ApiResult<HealthResponse> = get("/health", HealthResponse.serializer(), auth = false)
+    suspend fun health(): ApiResult<HealthResponse> =
+        get("/health", HealthResponse.serializer(), auth = false)
 
     // --- Files ---
 
-    suspend fun list(path: String): ApiResult<FileListResponse> = get("/files/list?path=${encode(path)}", FileListResponse.serializer())
+    suspend fun list(path: String): ApiResult<FileListResponse> =
+        get("/files/list?path=${encode(path)}", FileListResponse.serializer())
 
-    suspend fun uploadInit(request: UploadInitRequest): ApiResult<UploadInitResponse> = post("/files/upload/init", UploadInitRequest.serializer(), request, UploadInitResponse.serializer())
+    suspend fun uploadInit(request: UploadInitRequest): ApiResult<UploadInitResponse> =
+        post("/files/upload/init", UploadInitRequest.serializer(), request, UploadInitResponse.serializer())
 
-    suspend fun uploadComplete(uploadId: String): ApiResult<UploadCompleteResponse> = post("/files/upload/complete", UploadCompleteRequest.serializer(), UploadCompleteRequest(uploadId), UploadCompleteResponse.serializer())
+    suspend fun uploadComplete(uploadId: String): ApiResult<UploadCompleteResponse> =
+        post(
+            "/files/upload/complete",
+            UploadCompleteRequest.serializer(),
+            UploadCompleteRequest(uploadId),
+            UploadCompleteResponse.serializer(),
+        )
 
-    suspend fun mkdir(path: String, name: String): ApiResult<FileEntry> = post("/files/mkdir", MkdirRequest.serializer(), MkdirRequest(path, name), FileEntry.serializer())
+    suspend fun mkdir(
+        path: String,
+        name: String,
+    ): ApiResult<FileEntry> =
+        post("/files/mkdir", MkdirRequest.serializer(), MkdirRequest(path, name), FileEntry.serializer())
 
-    suspend fun rename(fromPath: String, toPath: String): ApiResult<FileEntry> = post("/files/rename", RenameRequest.serializer(), RenameRequest(fromPath, toPath), FileEntry.serializer())
+    suspend fun rename(
+        fromPath: String,
+        toPath: String,
+    ): ApiResult<FileEntry> =
+        post("/files/rename", RenameRequest.serializer(), RenameRequest(fromPath, toPath), FileEntry.serializer())
 
     suspend fun delete(path: String): ApiResult<Unit> {
         val body = json.encodeToString(DeleteRequest.serializer(), DeleteRequest(path)).toRequestBody(jsonMedia)

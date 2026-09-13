@@ -3,6 +3,7 @@ package de.filefly.feature.upload
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.filefly.common.ConflictStrategy
+import de.filefly.core.network.FileEntry
 
 // Kern-Screen: Zielverzeichnis wählen (respektiert base_path + Rechte) und die
 // vorgemerkten Medien gechunked hochladen. Zeigt Fortschritt pro Datei, Konflikt-
@@ -55,20 +57,11 @@ fun UploadScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                title = { Text("Upload nach ${state.currentPath.ifEmpty { "/" }}") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Zurück")
-                    }
-                },
-                actions = {
-                    if (state.role.canMkdir && state.writable) {
-                        IconButton(onClick = { showMkdir = true }) {
-                            Icon(Icons.Filled.CreateNewFolder, contentDescription = "Ordner anlegen")
-                        }
-                    }
-                },
+            UploadTopBar(
+                title = "Upload nach ${state.currentPath.ifEmpty { "/" }}",
+                showMkdir = state.role.canMkdir && state.writable,
+                onBack = onBack,
+                onMkdir = { showMkdir = true },
             )
         },
         floatingActionButton = {
@@ -79,57 +72,12 @@ fun UploadScreen(
             }
         },
     ) { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            // Verzeichnis-Navigation
-            if (state.currentPath != state.basePath) {
-                TextButton(onClick = viewModel::navigateUp) { Text("⬆ Eine Ebene höher") }
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                item {
-                    Text(
-                        "Ordner",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                    )
-                }
-                items(state.entries) { dir ->
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable { viewModel.navigateInto(dir) }
-                                .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        Icon(Icons.Filled.Folder, contentDescription = null)
-                        Text(dir.name)
-                    }
-                }
-
-                item {
-                    Text(
-                        "Dateien (${state.items.size})",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
-                    )
-                }
-                items(state.items) { progress ->
-                    UploadItemRow(progress)
-                }
-            }
-
-            state.error?.let { msg ->
-                Text(msg, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(8.dp))
-            }
-        }
+        UploadContent(
+            state = state,
+            padding = padding,
+            onNavigateUp = viewModel::navigateUp,
+            onNavigateInto = viewModel::navigateInto,
+        )
     }
 
     // Konflikt-Dialog
@@ -149,6 +97,91 @@ fun UploadScreen(
             },
             onDismiss = { showMkdir = false },
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UploadTopBar(
+    title: String,
+    showMkdir: Boolean,
+    onBack: () -> Unit,
+    onMkdir: () -> Unit,
+) {
+    TopAppBar(
+        title = { Text(title) },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Zurück")
+            }
+        },
+        actions = {
+            if (showMkdir) {
+                IconButton(onClick = onMkdir) {
+                    Icon(Icons.Filled.CreateNewFolder, contentDescription = "Ordner anlegen")
+                }
+            }
+        },
+    )
+}
+
+@Composable
+private fun UploadContent(
+    state: UploadViewModel.UiState,
+    padding: PaddingValues,
+    onNavigateUp: () -> Unit,
+    onNavigateInto: (FileEntry) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        // Verzeichnis-Navigation
+        if (state.currentPath != state.basePath) {
+            TextButton(onClick = onNavigateUp) { Text("⬆ Eine Ebene höher") }
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            item {
+                Text(
+                    "Ordner",
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                )
+            }
+            items(state.entries) { dir ->
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { onNavigateInto(dir) }
+                            .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Icon(Icons.Filled.Folder, contentDescription = null)
+                    Text(dir.name)
+                }
+            }
+
+            item {
+                Text(
+                    "Dateien (${state.items.size})",
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
+                )
+            }
+            items(state.items) { progress ->
+                UploadItemRow(progress)
+            }
+        }
+
+        state.error?.let { msg ->
+            Text(msg, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(8.dp))
+        }
     }
 }
 

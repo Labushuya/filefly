@@ -66,7 +66,11 @@ fun SettingsScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                 modifier = Modifier.fillMaxWidth(),
             )
-            OutlinedButton(onClick = viewModel::testConnection, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
+            OutlinedButton(
+                onClick = viewModel::testConnection,
+                enabled = !state.busy,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 Text("Verbindung testen")
             }
             state.connectionResult?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
