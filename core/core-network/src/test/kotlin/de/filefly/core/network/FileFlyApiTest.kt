@@ -25,6 +25,7 @@ class FileFlyApiTest {
         credentials =
             object : CredentialProvider {
                 override fun baseUrl() = server.url("").toString().trimEnd('/')
+
                 override fun token() = "test-jwt"
             }
         api = FileFlyApi(client, credentials)
