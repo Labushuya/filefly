@@ -37,8 +37,7 @@ class FileFlyApi(
 
     // --- System ---
 
-    suspend fun health(): ApiResult<HealthResponse> =
-        get("/health", HealthResponse.serializer(), auth = false)
+    suspend fun health(): ApiResult<HealthResponse> = get("/health", HealthResponse.serializer(), auth = false)
 
     // --- Files ---
 
@@ -119,7 +118,10 @@ class FileFlyApi(
             }
         }
 
-    private fun requestBuilder(endpoint: String, auth: Boolean = true): Request.Builder {
+    private fun requestBuilder(
+        endpoint: String,
+        auth: Boolean = true,
+    ): Request.Builder {
         val builder = Request.Builder().url(credentials.baseUrl() + endpoint)
         if (auth) credentials.token()?.let { builder.header("Authorization", "Bearer $it") }
         return builder
