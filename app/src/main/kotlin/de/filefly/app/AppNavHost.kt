@@ -104,16 +104,7 @@ fun FileFlyApp(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
-                    TopTab.entries.forEach { tab ->
-                        NavigationBarItem(
-                            selected = currentRoute == tab.route,
-                            onClick = { navController.navigateToTab(tab.route) },
-                            icon = { Icon(tab.icon, contentDescription = tab.label) },
-                            label = { Text(tab.label) },
-                        )
-                    }
-                }
+                BottomNavBar(currentRoute = currentRoute, navController = navController)
             }
         },
     ) { innerPadding ->
@@ -123,94 +114,145 @@ fun FileFlyApp(
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Routes.ONBOARDING) {
-                val vm =
-                    viewModel<OnboardingViewModel>(
-                        factory = simpleFactory { OnboardingViewModel(deps.api, deps.settingsStore) },
-                    )
-                OnboardingScreen(
-                    viewModel = vm,
-                    onDone = {
-                        navController.navigate(Routes.UPLOAD) {
-                            popUpTo(Routes.ONBOARDING) { inclusive = true }
-                        }
-                    },
-                )
+                OnboardingRoute(deps = deps, navController = navController)
             }
-
             composable(Routes.UPLOAD) {
-                val media by sharedMedia.collectAsStateWithLifecycle()
-                val vm =
-                    viewModel<UploadViewModel>(
-                        factory =
-                            simpleFactory {
-                                UploadViewModel(
-                                    resolver = deps.contentResolver,
-                                    api = deps.api,
-                                    uploader = deps.uploader,
-                                    settings = deps.settingsStore,
-                                    history = deps.history,
-                                )
-                            },
-                    )
-                // Geteilte Medien einmalig übernehmen + Listing starten.
-                LaunchedEffect(media) {
-                    if (media.isNotEmpty()) {
-                        vm.setItems(media)
-                        sharedMedia.value = emptyList()
-                    }
-                    vm.start()
-                }
-                UploadScreen(viewModel = vm, onBack = { navController.navigateToTab(Routes.UPLOAD) })
+                UploadRoute(sharedMedia = sharedMedia, deps = deps, navController = navController)
             }
-
             composable(Routes.HISTORY) {
-                val vm =
-                    viewModel<HistoryViewModel>(
-                        factory = simpleFactory { HistoryViewModel(deps.history) },
-                    )
-                HistoryScreen(viewModel = vm)
+                HistoryRoute(deps = deps)
             }
-
             composable(Routes.SETTINGS) {
-                val vm =
-                    viewModel<SettingsViewModel>(
-                        factory = simpleFactory { SettingsViewModel(deps.api, deps.settingsStore) },
-                    )
-                SettingsScreen(
-                    viewModel = vm,
-                    onOpenUpdates = { navController.navigate(Routes.UPDATES) },
-                    onLoggedOut = {
-                        navController.navigate(Routes.ONBOARDING) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    },
-                )
+                SettingsRoute(deps = deps, navController = navController)
             }
-
             composable(Routes.UPDATES) {
-                val context = LocalContext.current
-                val vm =
-                    viewModel<UpdateViewModel>(
-                        factory =
-                            simpleFactory {
-                                UpdateViewModel(
-                                    currentVersion = deps.versionName,
-                                    checker = deps.updater.checker,
-                                    downloader = deps.updater.downloader,
-                                    installer = deps.updater.installer,
-                                )
-                            },
-                    )
-                UpdatesScreen(
-                    viewModel = vm,
-                    onBack = { navController.popBackStack() },
-                    onFixInstallPermission = {
-                        context.startActivity(installUnknownAppsIntent(context.packageName))
-                    },
-                )
+                UpdatesRoute(deps = deps, navController = navController)
             }
         }
     }
+}
+
+@Composable
+private fun BottomNavBar(
+    currentRoute: String?,
+    navController: NavHostController,
+) {
+    NavigationBar {
+        TopTab.entries.forEach { tab ->
+            NavigationBarItem(
+                selected = currentRoute == tab.route,
+                onClick = { navController.navigateToTab(tab.route) },
+                icon = { Icon(tab.icon, contentDescription = tab.label) },
+                label = { Text(tab.label) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun OnboardingRoute(
+    deps: AppDependencies,
+    navController: NavHostController,
+) {
+    val vm =
+        viewModel<OnboardingViewModel>(
+            factory = simpleFactory { OnboardingViewModel(deps.api, deps.settingsStore) },
+        )
+    OnboardingScreen(
+        viewModel = vm,
+        onDone = {
+            navController.navigate(Routes.UPLOAD) {
+                popUpTo(Routes.ONBOARDING) { inclusive = true }
+            }
+        },
+    )
+}
+
+@Composable
+private fun UploadRoute(
+    sharedMedia: MutableStateFlow<List<MediaItem>>,
+    deps: AppDependencies,
+    navController: NavHostController,
+) {
+    val media by sharedMedia.collectAsStateWithLifecycle()
+    val vm =
+        viewModel<UploadViewModel>(
+            factory =
+                simpleFactory {
+                    UploadViewModel(
+                        resolver = deps.contentResolver,
+                        api = deps.api,
+                        uploader = deps.uploader,
+                        settings = deps.settingsStore,
+                        history = deps.history,
+                    )
+                },
+        )
+    // Geteilte Medien einmalig übernehmen + Listing starten.
+    LaunchedEffect(media) {
+        if (media.isNotEmpty()) {
+            vm.setItems(media)
+            sharedMedia.value = emptyList()
+        }
+        vm.start()
+    }
+    UploadScreen(viewModel = vm, onBack = { navController.navigateToTab(Routes.UPLOAD) })
+}
+
+@Composable
+private fun HistoryRoute(deps: AppDependencies) {
+    val vm =
+        viewModel<HistoryViewModel>(
+            factory = simpleFactory { HistoryViewModel(deps.history) },
+        )
+    HistoryScreen(viewModel = vm)
+}
+
+@Composable
+private fun SettingsRoute(
+    deps: AppDependencies,
+    navController: NavHostController,
+) {
+    val vm =
+        viewModel<SettingsViewModel>(
+            factory = simpleFactory { SettingsViewModel(deps.api, deps.settingsStore) },
+        )
+    SettingsScreen(
+        viewModel = vm,
+        onOpenUpdates = { navController.navigate(Routes.UPDATES) },
+        onLoggedOut = {
+            navController.navigate(Routes.ONBOARDING) {
+                popUpTo(0) { inclusive = true }
+            }
+        },
+    )
+}
+
+@Composable
+private fun UpdatesRoute(
+    deps: AppDependencies,
+    navController: NavHostController,
+) {
+    val context = LocalContext.current
+    val vm =
+        viewModel<UpdateViewModel>(
+            factory =
+                simpleFactory {
+                    UpdateViewModel(
+                        currentVersion = deps.versionName,
+                        checker = deps.updater.checker,
+                        downloader = deps.updater.downloader,
+                        installer = deps.updater.installer,
+                    )
+                },
+        )
+    UpdatesScreen(
+        viewModel = vm,
+        onBack = { navController.popBackStack() },
+        onFixInstallPermission = {
+            context.startActivity(installUnknownAppsIntent(context.packageName))
+        },
+    )
 }
 
 private fun installUnknownAppsIntent(packageName: String) =

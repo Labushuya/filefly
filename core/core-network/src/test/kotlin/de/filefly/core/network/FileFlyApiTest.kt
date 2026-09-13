@@ -41,7 +41,8 @@ class FileFlyApiTest {
         runBlocking {
             server.enqueue(
                 MockResponse().setBody(
-                    """{"access_token":"jwt123","token_type":"bearer","role":"user","base_path":"/fotos","permissions":["upload","mkdir"]}""",
+                    """{"access_token":"jwt123","token_type":"bearer","role":"user",""" +
+                        """"base_path":"/fotos","permissions":["upload","mkdir"]}""",
                 ),
             )
             val result = api.validateInvite("ABCD1234")

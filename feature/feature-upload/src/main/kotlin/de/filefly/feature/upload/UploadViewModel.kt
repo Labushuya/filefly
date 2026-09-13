@@ -200,8 +200,12 @@ class UploadViewModel(
                     )
                 }
                 history.record(
-                    historyRecord(recordId, item, dest, if (skipped) UploadRecord.STATUS_SKIPPED else UploadRecord.STATUS_SUCCESS)
-                        .copy(serverStatus = result.value.status, finishedAt = System.currentTimeMillis()),
+                    historyRecord(
+                        recordId,
+                        item,
+                        dest,
+                        if (skipped) UploadRecord.STATUS_SKIPPED else UploadRecord.STATUS_SUCCESS,
+                    ).copy(serverStatus = result.value.status, finishedAt = System.currentTimeMillis()),
                 )
             }
             is ApiResult.Failure -> {

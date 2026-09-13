@@ -81,27 +81,44 @@ class ChunkedUploader(
         totalSize: Long,
         openStream: () -> InputStream,
         onProgress: (Long, Long) -> Unit,
-    ): ApiResult<Unit> {
-        var index = 0
-        var sent = 0L
-        val buffer = ByteArray(chunkSize)
+    ): ApiResult<Unit> =
         try {
             openStream().use { stream ->
-                while (true) {
-                    val read = stream.readFully(buffer)
-                    if (read <= 0) break
-                    val chunkResult = postChunk(uploadId, index, buffer, read)
-                    if (chunkResult is ApiResult.Failure) return chunkResult
-                    sent += read
-                    index++
-                    onProgress(sent, totalSize)
-                    if (read < chunkSize) break // letzter (kurzer) Chunk
-                }
+                streamChunks(uploadId, chunkSize, totalSize, stream, onProgress)
             }
         } catch (e: IOException) {
-            return ApiResult.networkError("Lesefehler beim Upload: ${e.message}")
+            ApiResult.networkError("Lesefehler beim Upload: ${e.message}")
         }
-        return ApiResult.Ok(Unit)
+
+    // Liest den Stream chunkweise und sendet jeden Chunk. Bricht ab, sobald ein
+    // kurzer/leerer Chunk gelesen wurde (Stream-Ende) oder ein Chunk abgelehnt wird.
+    private fun streamChunks(
+        uploadId: String,
+        chunkSize: Int,
+        totalSize: Long,
+        stream: InputStream,
+        onProgress: (Long, Long) -> Unit,
+    ): ApiResult<Unit> {
+        val buffer = ByteArray(chunkSize)
+        var index = 0
+        var sent = 0L
+        var lastRead = chunkSize
+        var failure: ApiResult.Failure? = null
+        while (lastRead == chunkSize && failure == null) {
+            val read = stream.readFully(buffer)
+            lastRead = read
+            if (read > 0) {
+                when (val chunkResult = postChunk(uploadId, index, buffer, read)) {
+                    is ApiResult.Failure -> failure = chunkResult
+                    else -> {
+                        sent += read
+                        index++
+                        onProgress(sent, totalSize)
+                    }
+                }
+            }
+        }
+        return failure ?: ApiResult.Ok(Unit)
     }
 
     private fun postChunk(
