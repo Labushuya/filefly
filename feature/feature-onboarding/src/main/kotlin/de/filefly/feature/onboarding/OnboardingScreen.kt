@@ -41,12 +41,6 @@ fun OnboardingScreen(
         if (state.done) onDone()
     }
 
-    // QR-Scan (zxing-embedded). ScanContract fragt die CAMERA-Berechtigung selbst ab.
-    val scanLauncher =
-        rememberLauncherForActivityResult(ScanContract()) { result ->
-            result.contents?.let { viewModel.applyInviteUri(it) }
-        }
-
     Column(
         modifier =
             modifier
@@ -97,21 +91,7 @@ fun OnboardingScreen(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        OutlinedButton(
-            onClick = {
-                scanLauncher.launch(
-                    ScanOptions()
-                        .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-                        .setPrompt("Einladungs-QR scannen")
-                        .setBeepEnabled(false)
-                        .setOrientationLocked(false),
-                )
-            },
-            enabled = !state.busy,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text("QR-Code scannen")
-        }
+        ScanQrButton(enabled = !state.busy, onScanned = viewModel::applyInviteUri)
 
         Button(
             onClick = viewModel::redeemInvite,
@@ -125,13 +105,44 @@ fun OnboardingScreen(
             CircularProgressIndicator()
         }
 
-        state.error?.let { msg ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-            ) {
-                Text(msg, modifier = Modifier.padding(12.dp))
-            }
+        state.error?.let { msg -> ErrorCard(msg) }
+    }
+}
+
+// QR-Scan-Button (zxing-embedded). ScanContract fragt die CAMERA-Berechtigung selbst ab
+// und liefert den gescannten Inhalt (die filefly://invite-URI) zurück.
+@Composable
+private fun ScanQrButton(
+    enabled: Boolean,
+    onScanned: (String) -> Unit,
+) {
+    val scanLauncher =
+        rememberLauncherForActivityResult(ScanContract()) { result ->
+            result.contents?.let(onScanned)
         }
+    OutlinedButton(
+        onClick = {
+            scanLauncher.launch(
+                ScanOptions()
+                    .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                    .setPrompt("Einladungs-QR scannen")
+                    .setBeepEnabled(false)
+                    .setOrientationLocked(false),
+            )
+        },
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text("QR-Code scannen")
+    }
+}
+
+@Composable
+private fun ErrorCard(message: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+    ) {
+        Text(message, modifier = Modifier.padding(12.dp))
     }
 }

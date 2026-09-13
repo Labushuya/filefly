@@ -42,7 +42,8 @@ class OnboardingViewModel(
     // Übernimmt eine gescannte oder per Deep-Link empfangene filefly://invite-URI:
     // füllt Server-URL (falls enthalten) + Code. Gibt true zurück, wenn die URI gültig war.
     fun applyInviteUri(raw: String?): Boolean {
-        val parsed = InviteUri.parse(raw) ?: run {
+        val parsed = InviteUri.parse(raw)
+        if (parsed == null) {
             _state.value = _state.value.copy(error = "Ungültiger Einladungs-Code / QR.")
             return false
         }
