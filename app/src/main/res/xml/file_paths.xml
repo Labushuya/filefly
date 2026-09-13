@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider-Pfade für den APK-Download des In-App-Updaters (cache/updates/). -->
+<paths>
+    <cache-path name="updates" path="updates/" />
+</paths>
