@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FileFly Platzhalter-Icon: stilisiertes "Firefly" — ein aufsteigender Punkt mit
+     Leucht-Halo (Gold) und Bewegungsspur, auf Nachtblau-Hintergrund (colors.xml).
+     Echtes Marken-Icon folgt (Roadmap). Motiv in der 108er-Safe-Zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Aufsteigende Spur (Bewegung des Fireflys). -->
+    <path
+        android:strokeColor="#6FB2E0"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M40,74 C48,64 50,58 62,46" />
+
+    <!-- Leucht-Halo hinter dem Punkt. -->
+    <path
+        android:fillColor="#33FFC24B"
+        android:pathData="M64,42 m-16,0 a16,16 0 1,0 32,0 a16,16 0 1,0 -32,0 Z" />
+
+    <!-- Der Firefly-Punkt (Gold). -->
+    <path
+        android:fillColor="#FFC24B"
+        android:pathData="M64,42 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0 Z" />
+</vector>
