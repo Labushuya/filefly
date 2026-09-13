@@ -2,6 +2,7 @@ package de.filefly.feature.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.filefly.common.InviteUri
 import de.filefly.core.data.SettingsStore
 import de.filefly.core.network.ApiResult
 import de.filefly.core.network.FileFlyApi
@@ -36,6 +37,23 @@ class OnboardingViewModel(
 
     fun onInviteChange(code: String) {
         _state.value = _state.value.copy(inviteCode = code.trim(), error = null)
+    }
+
+    // Übernimmt eine gescannte oder per Deep-Link empfangene filefly://invite-URI:
+    // füllt Server-URL (falls enthalten) + Code. Gibt true zurück, wenn die URI gültig war.
+    fun applyInviteUri(raw: String?): Boolean {
+        val parsed = InviteUri.parse(raw) ?: run {
+            _state.value = _state.value.copy(error = "Ungültiger Einladungs-Code / QR.")
+            return false
+        }
+        _state.value =
+            _state.value.copy(
+                serverUrl = parsed.server.ifBlank { _state.value.serverUrl },
+                inviteCode = parsed.code,
+                connectionOk = null,
+                error = null,
+            )
+        return true
     }
 
     // Speichert die URL und ruft /health, um die Erreichbarkeit zu prüfen.

@@ -3,6 +3,7 @@ package de.filefly.core.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -34,6 +35,23 @@ class FileFlyApi(
             TokenResponse.serializer(),
             auth = false,
         )
+
+    // Legt einen Invite an (nur Admin). Server liefert Klartext-Code + url einmalig zurück.
+    suspend fun createInvite(request: CreateInviteRequest): ApiResult<InviteCreateResponse> =
+        post(
+            "/auth/invite",
+            CreateInviteRequest.serializer(),
+            request,
+            InviteCreateResponse.serializer(),
+        )
+
+    // Listet bestehende Invites (nur Admin) — ohne Klartext-Code.
+    suspend fun listInvites(): ApiResult<List<InviteSummary>> =
+        get("/auth/invites", ListSerializer(InviteSummary.serializer()))
+
+    // Widerruft einen Invite per id (nur Admin).
+    suspend fun revokeInvite(id: String): ApiResult<Unit> =
+        request(requestBuilder("/auth/invite/${encode(id)}").delete()) { }
 
     // --- System ---
 

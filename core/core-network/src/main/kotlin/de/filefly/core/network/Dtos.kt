@@ -21,6 +21,46 @@ data class TokenResponse(
     val permissions: List<String> = emptyList(),
 )
 
+// --- Invites (Admin) ---
+
+// Anlegen eines Invites. permissions optional -> Server setzt Rollen-Defaults.
+// expires_in_hours optional -> null bedeutet unbegrenzt gültig.
+@Serializable
+data class CreateInviteRequest(
+    val role: String,
+    @SerialName("base_path") val basePath: String = "",
+    val permissions: List<String>? = null,
+    @SerialName("expires_in_hours") val expiresInHours: Int? = null,
+    @SerialName("max_uses") val maxUses: Int = 0,
+)
+
+// Antwort direkt nach dem Anlegen — der Klartext-Code (und die url) werden NUR hier
+// einmalig geliefert; danach kennt der Server nur noch den Hash.
+@Serializable
+data class InviteCreateResponse(
+    val code: String,
+    val url: String = "",
+    val role: String,
+    @SerialName("base_path") val basePath: String = "",
+    val permissions: List<String> = emptyList(),
+    @SerialName("expires_at") val expiresAt: String? = null,
+    @SerialName("max_uses") val maxUses: Int = 0,
+)
+
+// Übersicht bestehender Invites — ohne Klartext-Code (nur code_hint = letzte Zeichen).
+@Serializable
+data class InviteSummary(
+    val id: String,
+    @SerialName("code_hint") val codeHint: String = "",
+    val role: String,
+    @SerialName("base_path") val basePath: String = "",
+    val permissions: List<String> = emptyList(),
+    @SerialName("expires_at") val expiresAt: String? = null,
+    @SerialName("max_uses") val maxUses: Int = 0,
+    @SerialName("used_count") val usedCount: Int = 0,
+    @SerialName("created_at") val createdAt: String? = null,
+)
+
 // --- Files ---
 
 @Serializable

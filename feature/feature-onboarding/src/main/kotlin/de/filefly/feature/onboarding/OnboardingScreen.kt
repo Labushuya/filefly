@@ -1,5 +1,6 @@
 package de.filefly.feature.onboarding
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 
 // Onboarding-Screen: Server-URL + Invite-Code. Ruft onDone, sobald die Session steht.
 @Composable
@@ -37,6 +40,12 @@ fun OnboardingScreen(
     LaunchedEffect(state.done) {
         if (state.done) onDone()
     }
+
+    // QR-Scan (zxing-embedded). ScanContract fragt die CAMERA-Berechtigung selbst ab.
+    val scanLauncher =
+        rememberLauncherForActivityResult(ScanContract()) { result ->
+            result.contents?.let { viewModel.applyInviteUri(it) }
+        }
 
     Column(
         modifier =
@@ -87,6 +96,22 @@ fun OnboardingScreen(
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        OutlinedButton(
+            onClick = {
+                scanLauncher.launch(
+                    ScanOptions()
+                        .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                        .setPrompt("Einladungs-QR scannen")
+                        .setBeepEnabled(false)
+                        .setOrientationLocked(false),
+                )
+            },
+            enabled = !state.busy,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("QR-Code scannen")
+        }
 
         Button(
             onClick = viewModel::redeemInvite,

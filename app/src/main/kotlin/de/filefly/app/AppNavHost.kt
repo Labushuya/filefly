@@ -36,6 +36,8 @@ import de.filefly.core.network.ChunkedUploader
 import de.filefly.core.network.FileFlyApi
 import de.filefly.feature.history.HistoryScreen
 import de.filefly.feature.history.HistoryViewModel
+import de.filefly.feature.invite.InviteScreen
+import de.filefly.feature.invite.InviteViewModel
 import de.filefly.feature.onboarding.OnboardingScreen
 import de.filefly.feature.onboarding.OnboardingViewModel
 import de.filefly.feature.settings.SettingsScreen
@@ -74,6 +76,7 @@ object Routes {
     const val HISTORY = "history"
     const val SETTINGS = "settings"
     const val UPDATES = "updates"
+    const val INVITE = "invite"
 }
 
 private enum class TopTab(
@@ -89,6 +92,7 @@ private enum class TopTab(
 @Composable
 fun FileFlyApp(
     sharedMedia: MutableStateFlow<List<MediaItem>>,
+    pendingInvite: MutableStateFlow<String?>,
     deps: AppDependencies,
 ) {
     val navController = rememberNavController()
@@ -97,9 +101,12 @@ fun FileFlyApp(
     val showBottomBar = currentRoute in setOf(Routes.UPLOAD, Routes.HISTORY, Routes.SETTINGS)
 
     // Startziel abhängig davon, ob schon eine Session besteht. Wird einmalig geprüft.
+    // Ein per Deep-Link empfangener Invite erzwingt Onboarding (neuen Zugang einlösen).
     var startRoute by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(Unit) {
-        startRoute = if (deps.settingsStore.isLoggedIn.first()) Routes.UPLOAD else Routes.ONBOARDING
+        val loggedIn = deps.settingsStore.isLoggedIn.first()
+        startRoute =
+            if (loggedIn && pendingInvite.value == null) Routes.UPLOAD else Routes.ONBOARDING
     }
     val resolvedStart = startRoute ?: return
 
@@ -117,7 +124,7 @@ fun FileFlyApp(
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(Routes.ONBOARDING) {
-                OnboardingRoute(deps = deps, navController = navController)
+                OnboardingRoute(deps = deps, navController = navController, pendingInvite = pendingInvite)
             }
             composable(Routes.UPLOAD) {
                 UploadRoute(sharedMedia = sharedMedia, deps = deps, navController = navController)
@@ -130,6 +137,9 @@ fun FileFlyApp(
             }
             composable(Routes.UPDATES) {
                 UpdatesRoute(deps = deps, navController = navController)
+            }
+            composable(Routes.INVITE) {
+                InviteRoute(deps = deps, navController = navController)
             }
         }
     }
@@ -156,11 +166,20 @@ private fun BottomNavBar(
 private fun OnboardingRoute(
     deps: AppDependencies,
     navController: NavHostController,
+    pendingInvite: MutableStateFlow<String?>,
 ) {
     val vm =
         viewModel<OnboardingViewModel>(
             factory = simpleFactory { OnboardingViewModel(deps.api, deps.settingsStore) },
         )
+    // Deep-Link-Invite einmalig übernehmen (Server-URL + Code vorbefüllen).
+    val invite by pendingInvite.collectAsStateWithLifecycle()
+    LaunchedEffect(invite) {
+        invite?.let {
+            vm.applyInviteUri(it)
+            pendingInvite.value = null
+        }
+    }
     OnboardingScreen(
         viewModel = vm,
         onDone = {
@@ -223,12 +242,25 @@ private fun SettingsRoute(
     SettingsScreen(
         viewModel = vm,
         onOpenUpdates = { navController.navigate(Routes.UPDATES) },
+        onOpenInvites = { navController.navigate(Routes.INVITE) },
         onLoggedOut = {
             navController.navigate(Routes.ONBOARDING) {
                 popUpTo(0) { inclusive = true }
             }
         },
     )
+}
+
+@Composable
+private fun InviteRoute(
+    deps: AppDependencies,
+    navController: NavHostController,
+) {
+    val vm =
+        viewModel<InviteViewModel>(
+            factory = simpleFactory { InviteViewModel(deps.api, deps.settingsStore) },
+        )
+    InviteScreen(viewModel = vm, onBack = { navController.popBackStack() })
 }
 
 @Composable

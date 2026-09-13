@@ -20,6 +20,8 @@
     <!-- Android 13+: Zugriff auf geteilte Foto-/Video-URIs. -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <!-- QR-Scan beim Einlösen von Einladungen (zxing-embedded fragt zur Laufzeit). -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".FileFlyApplication"
@@ -65,6 +67,14 @@
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="video/*" />
+            </intent-filter>
+
+            <!-- Deep-Link zum Einlösen einer Einladung: filefly://invite?server=…&code=… -->
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="filefly" android:host="invite" />
             </intent-filter>
         </activity>
 

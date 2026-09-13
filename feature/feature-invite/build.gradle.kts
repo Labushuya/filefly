@@ -1,4 +1,4 @@
-// :feature-onboarding — Server-URL eingeben + Invite-Code einlösen.
+// :feature-invite — Admin: Invites erstellen (Code/QR/Deep-Link) + Liste/Revoke.
 plugins {
     alias(libs.plugins.filefly.android.feature)
 }
@@ -10,6 +10,6 @@ dependencies {
     implementation(project(":core:core-ui"))
     implementation(libs.kotlinx.coroutines.android)
 
-    // QR-Scan zum Einlösen (kein Play-Services).
-    implementation(libs.zxing.embedded)
+    // QR-Code erzeugen (reines Encoding, kein Play-Services).
+    implementation(libs.zxing.core)
 }
