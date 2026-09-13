@@ -1,9 +1,9 @@
 {
-  "versionName": "0.2.0",
-  "versionCode": 200,
+  "versionName": "0.3.0",
+  "versionCode": 300,
   "minSdk": 26,
-  "apkUrl": "https://github.com/Labushuya/filefly/releases/download/v0.2.0/filefly-v0.2.0.apk",
-  "sha256": "145e431af515c20dd75a6ae918a0727b93f5524dec4c23ef802753ffb1adcf1e",
-  "sizeBytes": 1614728,
+  "apkUrl": "https://github.com/Labushuya/filefly/releases/download/v0.3.0/filefly-v0.3.0.apk",
+  "sha256": "d1abd0c086285a3e51089fa3488b4fe5c92309d5a4296f7a5aa26c2f2fd1f2dd",
+  "sizeBytes": 1791428,
   "mandatory": false
 }
