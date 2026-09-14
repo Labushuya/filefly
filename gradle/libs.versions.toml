@@ -5,8 +5,8 @@
 [versions]
 # --- Build-Toolchain ---
 agp = "8.7.3"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
+kotlin = "2.4.20"
+ksp = "2.3.12"
 # --- AndroidX / Compose ---
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
@@ -21,8 +21,8 @@ hilt = "2.53.1"
 hiltNavigationCompose = "1.2.0"
 # --- Netzwerk / Serialisierung ---
 okhttp = "4.12.0"
-kotlinxSerialization = "1.7.3"
-kotlinxCoroutines = "1.9.0"
+kotlinxSerialization = "1.11.0"
+kotlinxCoroutines = "1.11.0"
 # --- Bilder ---
 coil = "2.7.0"
 # --- QR (Sideload-freundlich: keine Google-Play-Services) ---
@@ -31,10 +31,10 @@ zxingEmbedded = "4.3.0"
 # --- Qualität ---
 ktlint = "12.1.2"
 detekt = "1.23.7"
-kover = "0.9.0"
+kover = "0.9.9"
 # --- Test ---
 junit = "4.13.2"
-kotlinxCoroutinesTest = "1.9.0"
+kotlinxCoroutinesTest = "1.11.0"
 mockwebserver = "4.12.0"
 robolectric = "4.14.1"
 androidxJunit = "1.2.1"
