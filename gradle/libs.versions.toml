@@ -26,7 +26,7 @@ kotlinxCoroutines = "1.9.0"
 # --- Bilder ---
 coil = "2.7.0"
 # --- QR (Sideload-freundlich: keine Google-Play-Services) ---
-zxingCore = "3.5.3"
+zxingCore = "3.5.4"
 zxingEmbedded = "4.3.0"
 # --- Qualität ---
 ktlint = "12.1.2"
