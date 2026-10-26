@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/Labushuya/filefly/compare/v0.3.0...v0.3.1) (2026-10-26)
+
+
+### Bug Fixes
+
+* **ci:** upgrade setup-android v3→v4.0.4 — v3 breaks on new runners (sdkmanager tools package removed) ([4264583](https://github.com/Labushuya/filefly/commit/426458318848ad0c92836c4b09877963b1f27feb))
+
 ## [0.3.0](https://github.com/Labushuya/filefly/compare/v0.2.0...v0.3.0) (2026-09-13)
 
 
